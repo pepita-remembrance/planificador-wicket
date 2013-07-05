@@ -8,7 +8,7 @@ class MyPageTest {
 
   @Test
   def testRender = {
-    val tester = new WicketTester( new WicketApplication)
+    val tester = new WicketTester( new WicketScalaApplication)
     tester.startPage(classOf[MyPage])
     tester.assertRenderedPage(classOf[MyPage])
     tester.assertVisible("helloWorldLabel")
