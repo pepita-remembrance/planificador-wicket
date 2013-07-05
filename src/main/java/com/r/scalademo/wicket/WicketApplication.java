@@ -16,7 +16,7 @@ public class WicketApplication extends WebApplication
 	@Override
 	public Class<? extends WebPage> getHomePage()
 	{
-		return HomePage.class;
+		return MyPage.class;
 	}
 
 	/**
