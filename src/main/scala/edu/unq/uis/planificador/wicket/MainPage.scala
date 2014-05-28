@@ -1,4 +1,4 @@
-package edu.unq.uis.planificador.wicket.main
+package edu.unq.uis.planificador.wicket
 
 import org.apache.wicket.markup.html.WebPage
 import org.apache.wicket.model.{Model, ResourceModel}
