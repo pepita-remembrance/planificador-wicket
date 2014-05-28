@@ -1,11 +1,15 @@
 package edu.unq.uis.planificador.wicket.planificacion.detalle
 
-import org.apache.wicket.model.{IModel, Model}
-import ro.fortsoft.wicket.jade.JadePanel
-import scala.collection.JavaConversions._
-import scala.collection.mutable
+import org.apache.wicket.model.{PropertyModel, CompoundPropertyModel, Model, IModel}
+import org.apache.wicket.markup.html.panel.Panel
+import org.apache.wicket.markup.html.form.TextField
 
+class DetallePage(id: String, planificacion: Planificacion)
+  extends Panel(id, new Model[Planificacion](planificacion)) {
 
-class DetallePage(id: String, model: IModel[java.util.Map[String,Object]]) extends JadePanel(id, model){
-
+  add(
+    new TextField[String]("diaDeSemana", new PropertyModel[String](getDefaultModel, "diaDeSemana"))
+  )
 }
+
+case class Planificacion(var diaDeSemana:String)
