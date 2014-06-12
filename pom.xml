@@ -50,6 +50,13 @@
       <artifactId>wicket-core</artifactId>
       <version>${wicket.version}</version>
     </dependency>
+
+      <dependency>
+          <groupId>org.wicketstuff</groupId>
+          <artifactId>wicketstuff-editable-grid</artifactId>
+          <version>6.0-SNAPSHOT</version>
+      </dependency>
+
     <!-- OPTIONAL DEPENDENCY
     <dependency>
       <groupId>org.apache.wicket</groupId>
@@ -58,11 +65,11 @@
     </dependency>
     -->
 
-    <dependency>
-      <groupId>ar.edu.unq.ui</groupId>
-      <artifactId>planificador-domain_2.11</artifactId>
-      <version>1.0</version>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>ar.edu.unq.ui</groupId>-->
+      <!--<artifactId>planificador-domain_2.11</artifactId>-->
+      <!--<version>1.0</version>-->
+    <!--</dependency>-->
 
     <!-- LOGGING DEPENDENCIES - LOG4J -->
     <dependency>
@@ -253,5 +260,12 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+      <repository>
+          <id>wicketstuff-core-snapshots</id>
+          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+          <snapshots>
+              <enabled>true</enabled>
+          </snapshots>
+      </repository>
   </repositories>
 </project>
