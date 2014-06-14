@@ -2,13 +2,11 @@ package edu.unq.uis.planificador.wicket
 
 import org.apache.wicket.markup.html.WebPage
 import org.apache.wicket.model.{IModel, Model}
-import edu.unq.uis.planificador.wicket.planificacion.detalle.DetallePage
 import org.wicketstuff.egrid.EditableGrid
-import org.wicketstuff.egrid.column.{EditableTextFieldPropertyColumn, AbstractEditablePropertyColumn}
+import org.wicketstuff.egrid.column.{RequiredEditableTextFieldColumn, AbstractEditablePropertyColumn}
 import org.wicketstuff.egrid.provider.EditableListDataProvider
 import scala.collection.mutable
 import scala.collection.JavaConverters._
-import edu.unq.uis.planificador.wicket.planificacion.detalle.Planificacion
 import org.apache.wicket.ajax.AjaxRequestTarget
 import edu.unq.uis.planificador.domain.builders.RecurrentCalendarSpaceBuilder._
 import edu.unq.uis.planificador.domain.calendar.DiaDeSemana.{Martes, Lunes}
@@ -18,8 +16,6 @@ import edu.unq.uis.planificador.domain.Empleado
 
 
 class MainPage extends WebPage {
-  def helloPanel = new DetallePage("detallePanel", Planificacion("Lunes"))
-
   val empleadoHome: AbstractCollectionBasedHomeEmpleado = EmpleadosCollectionBasedHome
 
   val pedro = new Empleado("Pedro", "Picapiedras", "123134")
@@ -35,10 +31,6 @@ class MainPage extends WebPage {
   juana disponibleLos (Martes de 16 a 20)
   empleadoHome.create(juana)
 
-
-  new EditableListDataProvider[Empleado, String](empleadoHome.allInstances())
-
-  add(helloPanel)
   add(new EditableGrid[Empleado, String](
       "grid",
       getColumns.asJava,
@@ -53,6 +45,7 @@ class MainPage extends WebPage {
       override def onError(target: AjaxRequestTarget): Unit = super.onError(target)
 
       override def onSave(target: AjaxRequestTarget, rowModel: IModel[Empleado]): Unit =
+        //TODO: Las validaciones del grit para required andan re mal, hay que validar el required de alguna otra manera...
         super.onSave(target, rowModel)
 
       override def onDelete(target: AjaxRequestTarget, rowModel: IModel[Empleado]): Unit = super.onDelete(target, rowModel)
@@ -63,7 +56,9 @@ class MainPage extends WebPage {
 
   def getColumns: mutable.Buffer[AbstractEditablePropertyColumn[Empleado, String]] = {
     mutable.Buffer.empty[AbstractEditablePropertyColumn[Empleado, String]] :+
-      new EditableTextFieldPropertyColumn[Empleado, String](new Model("Nombre"), "nombre", true)
+      new RequiredEditableTextFieldColumn[Empleado, String](new Model("Nombre"), "nombre", true) :+
+      new RequiredEditableTextFieldColumn[Empleado, String](new Model("Apellido"), "apellido", true) :+
+      new RequiredEditableTextFieldColumn[Empleado, String](new Model("Legajo"), "legajo", true)
   }
 
 }
