@@ -70,11 +70,11 @@
       </dependency>
       -->
 
-    <!--<dependency>-->
-      <!--<groupId>ar.edu.unq.ui</groupId>-->
-      <!--<artifactId>planificador-domain_2.11</artifactId>-->
-      <!--<version>1.0</version>-->
-    <!--</dependency>-->
+    <dependency>
+      <groupId>default</groupId>
+        <artifactId>unq-ui-planificador_2.10</artifactId>
+        <version>1.0</version>
+    </dependency>
 
     <!-- LOGGING DEPENDENCIES - LOG4J -->
     <dependency>
