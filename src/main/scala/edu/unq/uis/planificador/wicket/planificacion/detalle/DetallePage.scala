@@ -6,7 +6,6 @@ import org.apache.wicket.markup.html.form.TextField
 
 class DetallePage(id: String, planificacion: Planificacion)
   extends Panel(id, new CompoundPropertyModel[Planificacion](planificacion)) {
-
   add(new TextField[String]("diaDeSemana"))
 }
 
