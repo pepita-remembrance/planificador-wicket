@@ -1,9 +1,10 @@
 package edu.unq.uis.planificador.wicket
 
+import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn
 import org.apache.wicket.markup.html.WebPage
 import org.apache.wicket.model.{IModel, Model}
 import org.wicketstuff.egrid.EditableGrid
-import org.wicketstuff.egrid.column.{RequiredEditableTextFieldColumn, AbstractEditablePropertyColumn}
+import org.wicketstuff.egrid.column.{EditableCellPanel, EditableGridActionsColumn, RequiredEditableTextFieldColumn, AbstractEditablePropertyColumn}
 import org.wicketstuff.egrid.provider.EditableListDataProvider
 import scala.collection.mutable
 import scala.collection.JavaConverters._
@@ -31,11 +32,13 @@ class MainPage extends WebPage {
   juana disponibleLos (Martes de 16 a 20)
   empleadoHome.create(juana)
 
+  val ROWS_PER_PAGE = 20
+
   add(new EditableGrid[Empleado, String](
       "grid",
       getColumns.asJava,
       new EditableListDataProvider[Empleado, String](empleadoHome.allInstances()),
-      20,
+      ROWS_PER_PAGE,
       classOf[Empleado]
     ) {
       override def displayAddFeature(): Boolean = super.displayAddFeature()
@@ -54,8 +57,8 @@ class MainPage extends WebPage {
     }
   )
 
-  def getColumns: mutable.Buffer[AbstractEditablePropertyColumn[Empleado, String]] = {
-    mutable.Buffer.empty[AbstractEditablePropertyColumn[Empleado, String]] :+
+  def getColumns: mutable.Buffer[PropertyColumn[Empleado, String]] = {
+    mutable.Buffer.empty[PropertyColumn[Empleado, String]] :+
       new RequiredEditableTextFieldColumn[Empleado, String](new Model("Nombre"), "nombre", true) :+
       new RequiredEditableTextFieldColumn[Empleado, String](new Model("Apellido"), "apellido", true) :+
       new RequiredEditableTextFieldColumn[Empleado, String](new Model("Legajo"), "legajo", true)
