@@ -1,19 +1,21 @@
 package edu.unq.uis.planificador.wicket
 
+import edu.unq.uis.planificador.domain.Empleado
+import edu.unq.uis.planificador.domain.builders.RecurrentCalendarSpaceBuilder._
+import edu.unq.uis.planificador.domain.calendar.DiaDeSemana.{Lunes, Martes}
+import edu.unq.uis.planificador.domain.disponibilidad.Turno
+import edu.unq.uis.planificador.homes.{AbstractCollectionBasedHomeEmpleado, EmpleadosCollectionBasedHome}
+import edu.unq.uis.planificador.wicket.widgets.grid.columns.CustomActionColumn
+import org.apache.wicket.ajax.AjaxRequestTarget
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn
 import org.apache.wicket.markup.html.WebPage
 import org.apache.wicket.model.{IModel, Model}
 import org.wicketstuff.egrid.EditableGrid
-import org.wicketstuff.egrid.column.{EditableCellPanel, EditableGridActionsColumn, RequiredEditableTextFieldColumn, AbstractEditablePropertyColumn}
+import org.wicketstuff.egrid.column.RequiredEditableTextFieldColumn
 import org.wicketstuff.egrid.provider.EditableListDataProvider
-import scala.collection.mutable
+
 import scala.collection.JavaConverters._
-import org.apache.wicket.ajax.AjaxRequestTarget
-import edu.unq.uis.planificador.domain.builders.RecurrentCalendarSpaceBuilder._
-import edu.unq.uis.planificador.domain.calendar.DiaDeSemana.{Martes, Lunes}
-import edu.unq.uis.planificador.domain.disponibilidad.Turno
-import edu.unq.uis.planificador.homes.{AbstractCollectionBasedHomeEmpleado, EmpleadosCollectionBasedHome}
-import edu.unq.uis.planificador.domain.Empleado
+import scala.collection.mutable
 
 
 class MainPage extends WebPage {
@@ -61,7 +63,14 @@ class MainPage extends WebPage {
     mutable.Buffer.empty[PropertyColumn[Empleado, String]] :+
       new RequiredEditableTextFieldColumn[Empleado, String](new Model("Nombre"), "nombre", true) :+
       new RequiredEditableTextFieldColumn[Empleado, String](new Model("Apellido"), "apellido", true) :+
-      new RequiredEditableTextFieldColumn[Empleado, String](new Model("Legajo"), "legajo", true)
+      new RequiredEditableTextFieldColumn[Empleado, String](new Model("Legajo"), "legajo", true) :+
+      new CustomActionColumn[Empleado, String](
+        "Ver disponibilidades",
+        (target, model) => setResponsePage(classOf[DisponibilidadEmpleadoPage])
+      )
   }
 
+  class DisponibilidadEmpleadoPage extends WebPage {
+
+  }
 }
