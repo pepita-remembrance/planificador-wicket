@@ -9,7 +9,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColu
 import org.apache.wicket.markup.html.WebPage
 import org.apache.wicket.model.{IModel, Model}
 import org.wicketstuff.egrid.EditableGrid
-import org.wicketstuff.egrid.column.{EditableTextFieldPropertyColumn, RequiredEditableTextFieldColumn}
+import org.wicketstuff.egrid.column.RequiredEditableTextFieldColumn
 import org.wicketstuff.egrid.provider.EditableListDataProvider
 
 import scala.collection.JavaConverters._
@@ -28,19 +28,9 @@ class MainPage extends WebPage {
       ROWS_PER_PAGE,
       classOf[Empleado]
     ) {
-      override def displayAddFeature(): Boolean = super.displayAddFeature()
+    override def onAdd(target: AjaxRequestTarget, newRow: Empleado): Unit = empleadoHome.create(newRow)
 
-      override def onAdd(target: AjaxRequestTarget, newRow: Empleado): Unit = super.onAdd(target, newRow)
-
-      override def onError(target: AjaxRequestTarget): Unit = super.onError(target)
-
-      override def onSave(target: AjaxRequestTarget, rowModel: IModel[Empleado]): Unit =
-        //TODO: Las validaciones del grit para required andan re mal, hay que validar el required de alguna otra manera...
-        super.onSave(target, rowModel)
-
-      override def onDelete(target: AjaxRequestTarget, rowModel: IModel[Empleado]): Unit = super.onDelete(target, rowModel)
-
-      override def onCancel(target: AjaxRequestTarget): Unit = super.onCancel(target)
+    override def onDelete(target: AjaxRequestTarget, rowModel: IModel[Empleado]): Unit = empleadoHome.delete(rowModel.getObject)
     }
   )
 
@@ -52,7 +42,7 @@ class MainPage extends WebPage {
       new RequiredEditableTextFieldColumn[Empleado, String](new Model("Nombre"), "nombre", true) :+
       new RequiredEditableTextFieldColumn[Empleado, String](new Model("Apellido"), "apellido", true) :+
       new RequiredEditableTextFieldColumn[Empleado, String](new Model("Legajo"), "legajo", true) :+
-      new EditableTextFieldPropertyColumn[Empleado, String](new Model("Dias disponible"), "diasDisponible", false) :+
+      new PropertyColumn[Empleado, String](new Model("Dias disponible"), "diasDisponible") :+
       new CustomActionColumn[Empleado, String](
         "Ver disponibilidades",
         (target, model) => {
