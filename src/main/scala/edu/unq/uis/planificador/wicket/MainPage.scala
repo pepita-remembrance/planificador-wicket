@@ -2,7 +2,7 @@ package edu.unq.uis.planificador.wicket
 
 import edu.unq.uis.planificador.applicationModel.empleado.BuscadorEmpleados
 import edu.unq.uis.planificador.domain.Empleado
-import edu.unq.uis.planificador.wicket.empleado.DisponibilidadEmpleadoPanel
+import edu.unq.uis.planificador.wicket.empleado.{DisponibilidadEmpleadoPanel, RestriccionesEmpleadoPanel}
 import edu.unq.uis.planificador.wicket.widgets.grid.BootstrapEditableGrid
 import edu.unq.uis.planificador.wicket.widgets.grid.columns.CustomActionColumn
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn
@@ -28,19 +28,24 @@ class MainPage extends WebPage {
 
   buscarForm.add(new Label("empleadoSeleccionado.nombreCompleto"))
   addDisponibilidadesPanel(buscarForm)
+  addRestriccionesPanel(buscarForm)
 
   add(buscarForm)
 
   def addDisponibilidadesPanel(form: Form[BuscadorEmpleados]) = {
-    form.add(createDisponibilidadPanel)
-  }
-
-  def createDisponibilidadPanel: DisponibilidadEmpleadoPanel = {
     val panel = new DisponibilidadEmpleadoPanel("disponibilidades", buscador.empleadoSeleccionado)
     panel.setOutputMarkupId(true)
-    panel
+
+    form.add(panel)
   }
 
+  def addRestriccionesPanel(form: Form[BuscadorEmpleados]) = {
+    val panel = new RestriccionesEmpleadoPanel("restricciones", buscador.empleadoSeleccionado)
+    panel.setOutputMarkupId(true)
+
+    form.add(panel)
+  }  
+  
   def addResultadosGrid(form: Form[BuscadorEmpleados]) = {
     val grid = new BootstrapEditableGrid[Empleado, String](
       "grid",
@@ -59,20 +64,23 @@ class MainPage extends WebPage {
       new RequiredEditableTextFieldColumn[Empleado, String](new Model("Apellido"), "apellido", true) :+
       new RequiredEditableTextFieldColumn[Empleado, String](new Model("Legajo"), "legajo", true) :+
       new CustomActionColumn[Empleado, String](
-        "Ver disponibilidades",
+        "Ver detalle",
         (target, model) => {
           buscador.empleadoSeleccionado = model.getObject
 
           //Tengo que hacer esto a mano porque el Grid no se banca un Model
-          refreshDisponibilidades()
+          refreshPanels()
 
           target add buscarForm
         }
       )
   }
 
-  def refreshDisponibilidades() {
+  def refreshPanels() {
     buscarForm.remove("disponibilidades")
     addDisponibilidadesPanel(buscarForm)
+
+    buscarForm.remove("restricciones")
+    addRestriccionesPanel(buscarForm)
   }
 }
