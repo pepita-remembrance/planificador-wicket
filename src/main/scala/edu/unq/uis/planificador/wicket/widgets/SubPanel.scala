@@ -1,6 +1,5 @@
-package edu.unq.uis.planificador.wicket.empleado
+package edu.unq.uis.planificador.wicket.widgets
 
-import edu.unq.uis.planificador.domain.Empleado
 import edu.unq.uis.planificador.wicket.widgets.grid.BootstrapEditableGrid
 import org.apache.wicket.ajax.AjaxRequestTarget
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn
@@ -11,25 +10,25 @@ import org.wicketstuff.egrid.provider.IEditableDataProvider
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 
-abstract class EmpleadosSubPanel[A](id: String, val empleadoSeleccionado: Empleado, clazz: Class[A]) extends Panel(id, new Model(empleadoSeleccionado)) {
+abstract class SubPanel[Entidad <: java.io.Serializable, ListElement](id: String, val entidadSeleccionada: Entidad, clazz: Class[ListElement]) extends Panel(id, new Model(entidadSeleccionada)) {
   val ROWS_PER_PAGE = 20
 
   add(createGrid)
 
-  def createGrid = new BootstrapEditableGrid[A, String]("grid", getColumns, getProvider, ROWS_PER_PAGE, clazz) {
-    override def onDelete(target: AjaxRequestTarget, rowModel: IModel[A]) = {
+  def createGrid = new BootstrapEditableGrid[ListElement, String]("grid", getColumns, getProvider, ROWS_PER_PAGE, clazz) {
+    override def onDelete(target: AjaxRequestTarget, rowModel: IModel[ListElement]) = {
       getProvider.remove(rowModel.getObject)
       refreshGrid(target)
     }
 
-    override def onAdd(target: AjaxRequestTarget, newRow: A) {
+    override def onAdd(target: AjaxRequestTarget, newRow: ListElement) {
       refreshGrid(target)
     }
   }
 
-  def getProvider: IEditableDataProvider[A, String]
+  def getProvider: IEditableDataProvider[ListElement, String]
 
-  def getColumns: mutable.Buffer[PropertyColumn[A, String]]
+  def getColumns: mutable.Buffer[PropertyColumn[ListElement, String]]
 
   def refreshGrid(target: AjaxRequestTarget) {
     removeAll()

@@ -2,7 +2,6 @@ package edu.unq.uis.planificador.wicket.widgets.grid.columns
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.{BootstrapAjaxLink, Buttons}
 import org.apache.wicket.ajax.AjaxRequestTarget
-import org.apache.wicket.ajax.markup.html.AjaxLink
 import org.apache.wicket.event.Broadcast
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn
@@ -24,9 +23,11 @@ class CustomActionColumn[T, S](caption: String, action: (AjaxRequestTarget, IMod
 
 abstract class EditableGridCustomActionPanel[T](id: String, caption: String, cellItem: Item[ICellPopulator[T]], action: (AjaxRequestTarget) => Unit) extends Panel(id) {
   val rowItem = cellItem.findParent(classOf[Item[T]])
+  rowItem.setOutputMarkupId(true)
+
   add(newLink(rowItem))
 
-  private def newLink(rowItem: Item[T]): AjaxLink[String] = {
+  private def newLink(rowItem: Item[T]) = {
     new BootstrapAjaxLink[String]("link", Buttons.Type.Primary) {
       def onClick(target: AjaxRequestTarget) {
         send(getPage, Broadcast.BREADTH, rowItem)
@@ -35,5 +36,6 @@ abstract class EditableGridCustomActionPanel[T](id: String, caption: String, cel
       }
     }
       .setLabel(Model.of(caption))
+      .setOutputMarkupId(true)
   }
 }

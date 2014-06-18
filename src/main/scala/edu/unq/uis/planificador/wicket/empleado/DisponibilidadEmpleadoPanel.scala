@@ -2,6 +2,7 @@ package edu.unq.uis.planificador.wicket.empleado
 
 import edu.unq.uis.planificador.domain.Empleado
 import edu.unq.uis.planificador.domain.calendar.{DiaDeSemana, RecurrentCalendarSpace}
+import edu.unq.uis.planificador.wicket.widgets.SubPanel
 import edu.unq.uis.planificador.wicket.widgets.grid.columns.RequiredEditableDropDownColumn
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn
 import org.apache.wicket.model.Model
@@ -23,7 +24,7 @@ class DisponibilidadesProvider(empleado: Empleado) extends EditableListDataProvi
   override def getData = empleado.disponibilidades
 }
 
-class DisponibilidadEmpleadoPanel(id: String, empleadoSeleccionado: Empleado) extends EmpleadosSubPanel(id, empleadoSeleccionado, classOf[RecurrentCalendarSpace]) {
+class DisponibilidadEmpleadoPanel(id: String, empleadoSeleccionado: Empleado) extends SubPanel(id, empleadoSeleccionado, classOf[RecurrentCalendarSpace]) {
   override def getColumns: mutable.Buffer[PropertyColumn[RecurrentCalendarSpace, String]] = {
     mutable.Buffer.empty[PropertyColumn[RecurrentCalendarSpace, String]] :+
       new RequiredEditableDropDownColumn[RecurrentCalendarSpace, String](new Model("Dia"), "diaDeSemana", diasRestantes) :+
