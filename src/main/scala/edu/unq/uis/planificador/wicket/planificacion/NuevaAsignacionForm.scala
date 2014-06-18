@@ -3,11 +3,11 @@ package edu.unq.uis.planificador.wicket.planificacion
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.{BootstrapAjaxButton, Buttons}
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm
 import de.agilecoders.wicket.core.markup.html.bootstrap.table.TableBehavior
-import edu.unq.uis.planificador.domain.disponibilidad.Turno
+import edu.unq.uis.planificador.domain.disponibilidad.{Restriccion, Turno}
 import edu.unq.uis.planificador.domain.timeHelpers.TimeInterval
 import edu.unq.uis.planificador.domain.{Empleado, Planificacion}
 import edu.unq.uis.planificador.ui.empleado.{Hora, NuevaAsignacionModel}
-import edu.unq.uis.planificador.wicket.widgets.grid.columns.CustomActionColumn
+import edu.unq.uis.planificador.wicket.widgets.grid.columns.ConditionalCustomActionColumn
 import org.apache.wicket.Component
 import org.apache.wicket.ajax.AjaxRequestTarget
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator
@@ -46,12 +46,15 @@ class NuevaAsignacionForm(id: String, planificacion: Planificacion)
     def getColumns: mutable.Buffer[PropertyColumn[Empleado, String]] = mutable.Buffer.empty[PropertyColumn[Empleado, String]] :+
       new PropertyColumn[Empleado, String](new Model("Nombre"), "nombreCompleto") :+
       new RazonColumn(getModelObject) :+
-      new CustomActionColumn[Empleado, String]("Asignar", (target, model) => {
+      new ConditionalCustomActionColumn[Empleado, String]("Asignar", (target, model) => {
         model.getObject.asignar(
           Turno el planificacion.fecha de getModelObject.inicio.num a getModelObject.fin.num
         )
 
         target add this
+      }, (model) => {
+        val turno = new Turno(planificacion.fecha, TimeInterval.create(getModelObject.inicio.num, getModelObject.inicio.num))
+        model.disponibilidadPara(turno).disponibilidad != Restriccion
       })
 
     new DataTable[Empleado, String](
