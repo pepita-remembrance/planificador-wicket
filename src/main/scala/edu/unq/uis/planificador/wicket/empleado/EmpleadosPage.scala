@@ -18,7 +18,7 @@ import scala.collection.mutable
 class EmpleadosPage extends BasePage {
   val ROWS_PER_PAGE = 20
 
-  val buscador = new BuscadorEmpleados()
+  val buscador = BuscadorEmpleados()
   val buscarForm = new Form[BuscadorEmpleados]("buscadorEmpleados", new CompoundPropertyModel[BuscadorEmpleados](buscador))
 
   buscador.search

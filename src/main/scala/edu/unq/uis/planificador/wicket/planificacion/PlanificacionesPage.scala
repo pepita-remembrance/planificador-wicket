@@ -10,11 +10,15 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.{DataTable, 
 import org.apache.wicket.markup.html.basic.Label
 import org.apache.wicket.markup.html.form.Form
 import org.apache.wicket.markup.repeater.data.ListDataProvider
-import org.apache.wicket.model.{CompoundPropertyModel, Model}
+import org.apache.wicket.model.{IModel, CompoundPropertyModel, Model}
 import org.wicketstuff.egrid.provider.{EditableListDataProvider, IEditableDataProvider}
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
+import edu.unq.uis.planificador.domain.Planificacion
+import org.apache.wicket.markup.repeater.Item
+import org.apache.wicket.ajax.{AjaxRequestTarget, AjaxEventBehavior}
+import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior
 
 class PlanificacionesProvider(planificacion: Planificacion) extends EditableListDataProvider[TurnoEmpleado, String]() {
   override def add(item: TurnoEmpleado) {
@@ -66,7 +70,20 @@ class PlanificacionesPage extends BasePage {
       getColumns,
       new ListDataProvider[Planificacion](buscador.planificaciones),
       ROWS_PER_PAGE
-    )
+    ){
+      override def newRowItem(id: String, index: Int, model: IModel[Planificacion]): Item[Planificacion] = {
+        val rowItem: Item[Planificacion] = super.newRowItem(id, index, model)
+        rowItem.add(new AjaxFormSubmitBehavior("onclick") {
+          override def onEvent(target:AjaxRequestTarget ) {
+            buscador.planificacionSeleccionada = model.getObject
+            refreshPanels()
+            target add buscarForm
+          }
+        })
+        rowItem
+      }
+
+    }
       .add(new TableBehavior().hover())
       .setOutputMarkupId(true)
 
@@ -76,18 +93,7 @@ class PlanificacionesPage extends BasePage {
   def getColumns: mutable.Buffer[PropertyColumn[Planificacion, String]] = {
     mutable.Buffer.empty[PropertyColumn[Planificacion, String]] :+
       new PropertyColumn[Planificacion, String](new Model("Fecha"), "fecha") :+
-      new PropertyColumn[Planificacion, String](new Model("Estado"), "estado") :+
-      new CustomActionColumn[Planificacion, String](
-        "Ver detalle",
-        (target, model) => {
-          buscador.planificacionSeleccionada = model.getObject
-
-          //Tengo que hacer esto a mano porque el Grid no se banca un Model
-          refreshPanels()
-
-          target add buscarForm
-        }
-      )
+      new PropertyColumn[Planificacion, String](new Model("Estado"), "estado")
   }
 
   def refreshPanels() = {
