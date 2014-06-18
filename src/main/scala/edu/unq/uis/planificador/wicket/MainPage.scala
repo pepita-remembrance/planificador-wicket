@@ -36,7 +36,7 @@ class MainPage extends WebPage {
   }
 
   def createDisponibilidadPanel: DisponibilidadEmpleadoPanel = {
-    val panel = new DisponibilidadEmpleadoPanel(buscador.empleadoSeleccionado)
+    val panel = new DisponibilidadEmpleadoPanel("disponibilidades", buscador.empleadoSeleccionado)
     panel.setOutputMarkupId(true)
     panel
   }
