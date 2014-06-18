@@ -7,6 +7,7 @@ import edu.unq.uis.planificador.domain.disponibilidad.Turno
 import edu.unq.uis.planificador.domain.timeHelpers.TimeInterval
 import edu.unq.uis.planificador.domain.{Empleado, Planificacion}
 import edu.unq.uis.planificador.ui.empleado.{Hora, NuevaAsignacionModel}
+import edu.unq.uis.planificador.wicket.widgets.grid.columns.CustomActionColumn
 import org.apache.wicket.Component
 import org.apache.wicket.ajax.AjaxRequestTarget
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator
@@ -44,7 +45,14 @@ class NuevaAsignacionForm(id: String, planificacion: Planificacion)
   def createResultadosTable: Component = {
     def getColumns: mutable.Buffer[PropertyColumn[Empleado, String]] = mutable.Buffer.empty[PropertyColumn[Empleado, String]] :+
       new PropertyColumn[Empleado, String](new Model("Nombre"), "nombreCompleto") :+
-      new RazonColumn(getModelObject)
+      new RazonColumn(getModelObject) :+
+      new CustomActionColumn[Empleado, String]("Asignar", (target, model) => {
+        model.getObject.asignar(
+          Turno el planificacion.fecha de getModelObject.inicio.num a getModelObject.fin.num
+        )
+
+        target add this
+      })
 
     new DataTable[Empleado, String](
       "resultados", getColumns, new ListDataProvider[Empleado](getModelObject.buscador.empleados), 20
