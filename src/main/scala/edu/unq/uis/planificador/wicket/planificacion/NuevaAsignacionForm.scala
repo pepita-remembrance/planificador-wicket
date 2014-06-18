@@ -23,7 +23,7 @@ import scala.collection.mutable
 
 class RazonColumn(model: NuevaAsignacionModel) extends PropertyColumn[Empleado, String](new Model("Razon"), "") {
   def getRazonFor(empleado: Empleado) =
-    empleado.disponibilidadPara(new Turno(model.fecha, TimeInterval.create(model.inicio.num, model.inicio.num))).disponibilidad.razon
+    empleado.disponibilidadPara(new Turno(model.fecha, TimeInterval.create(model.inicio.num, model.fin.num))).disponibilidad.razon
 
   override def populateItem(item: Item[ICellPopulator[Empleado]], componentId: String, rowModel: IModel[Empleado]) =
     item.add(new Label(componentId, getRazonFor(rowModel.getObject)))
@@ -52,16 +52,21 @@ class NuevaAsignacionForm(id: String, planificacion: Planificacion)
         )
 
         target add this
-      }, (model) => {
-        val turno = new Turno(planificacion.fecha, TimeInterval.create(getModelObject.inicio.num, getModelObject.inicio.num))
-        model.disponibilidadPara(turno).disponibilidad != Restriccion
-      })
+      }, this.puedeSerAsignado)
 
     new DataTable[Empleado, String](
       "resultados", getColumns, new ListDataProvider[Empleado](getModelObject.buscador.empleados), 20
     )
       .add(new TableBehavior().hover())
       .setOutputMarkupId(true)
+  }
+
+  def puedeSerAsignado(model: Empleado) = {
+    val interval = TimeInterval.create(getModelObject.inicio.num, getModelObject.fin.num)
+    val cantidadDeHoras = interval.toDuration.getStandardHours
+
+    val turno = new Turno(planificacion.fecha, interval)
+    cantidadDeHoras >= 4 && cantidadDeHoras <= 8 && model.disponibilidadPara(turno).disponibilidad != Restriccion
   }
 
   def addPanelBusqueda() = {
