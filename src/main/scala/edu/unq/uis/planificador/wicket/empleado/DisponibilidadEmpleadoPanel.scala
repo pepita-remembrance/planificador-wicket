@@ -29,7 +29,9 @@ class DisponibilidadesProvider(empleado: Empleado) extends EditableListDataProvi
 class DisponibilidadEmpleadoPanel(var empleadoSeleccionado: Empleado) extends Panel("disponibilidades", new Model(empleadoSeleccionado)) {
   val ROWS_PER_PAGE = 20
 
-  add(new BootstrapEditableGrid[RecurrentCalendarSpace, String](
+  add(createGrid)
+
+  def createGrid = new BootstrapEditableGrid[RecurrentCalendarSpace, String](
     "grid",
     getColumns,
     new DisponibilidadesProvider(empleadoSeleccionado),
@@ -38,12 +40,12 @@ class DisponibilidadEmpleadoPanel(var empleadoSeleccionado: Empleado) extends Pa
   ) {
     override def onDelete(target: AjaxRequestTarget, rowModel: IModel[RecurrentCalendarSpace]) = {
       empleadoSeleccionado.borrarDisponibilidad(rowModel.getObject)
+      refreshGrid(target)
     }
-  }
-  )
 
-  def setModel(model: IModel[Empleado]) {
-    empleadoSeleccionado = model.getObject
+    override def onAdd(target: AjaxRequestTarget, newRow: RecurrentCalendarSpace) {
+      refreshGrid(target)
+    }
   }
 
   def getColumns: mutable.Buffer[PropertyColumn[RecurrentCalendarSpace, String]] = {
@@ -55,6 +57,13 @@ class DisponibilidadEmpleadoPanel(var empleadoSeleccionado: Empleado) extends Pa
 
   def diasRestantes: Seq[DiaDeSemana with Product] = {
     DiaDeSemana.todos.diff(empleadoSeleccionado.disponibilidades.map(_.diaDeSemana))
+  }
+
+  def refreshGrid(target: AjaxRequestTarget) {
+    removeAll()
+    add(createGrid)
+
+    target add this
   }
 }
 
