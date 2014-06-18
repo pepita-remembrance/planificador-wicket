@@ -1,6 +1,5 @@
 package edu.unq.uis.planificador.wicket.planificacion
 
-import de.agilecoders.wicket.core.markup.html.bootstrap.button.{Buttons, BootstrapButton}
 import de.agilecoders.wicket.core.markup.html.bootstrap.table.TableBehavior
 import edu.unq.uis.planificador.applicationModel.planificacion.BuscadorPlanificacion
 import edu.unq.uis.planificador.domain.{Planificacion, TurnoEmpleado}
@@ -36,13 +35,7 @@ class HorariosPlanificacionPanel(id: String, planificacion: Planificacion) exten
   addNuevaAsignacionModal(this)
 
   def addNuevaAsignacionModal(container: WebMarkupContainer) = {
-    val modal = new NuevaAsignacionModal("nuevaAsignacionModal", planificacion)
-
-    val modalButton = new BootstrapButton("nuevaAsignacionModal-opener", Buttons.Type.Default)
-    modalButton.setLabel(Model.of("Planificar"))
-    modal.addOpenerAttributesTo(modalButton)
-
-    container.add(modal, modalButton)
+    container.add(new NuevaAsignacionForm("nuevaAsignacionModal", planificacion))
   }    
   
   override def getProvider: IEditableDataProvider[TurnoEmpleado, String] = new PlanificacionesProvider(planificacion)

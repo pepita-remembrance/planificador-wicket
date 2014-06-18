@@ -1,7 +1,6 @@
 package edu.unq.uis.planificador.wicket.planificacion
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.{BootstrapAjaxButton, Buttons}
-import de.agilecoders.wicket.core.markup.html.bootstrap.dialog.Modal
 import de.agilecoders.wicket.core.markup.html.bootstrap.form.BootstrapForm
 import de.agilecoders.wicket.core.markup.html.bootstrap.table.TableBehavior
 import edu.unq.uis.planificador.domain.disponibilidad.Turno
@@ -29,13 +28,11 @@ class RazonColumn(model: NuevaAsignacionModel) extends PropertyColumn[Empleado, 
     item.add(new Label(componentId, getRazonFor(rowModel.getObject)))
 }
 
-class NuevaAsignacionModal(id: String, planificacion: Planificacion)
-  extends Modal[NuevaAsignacionModel](id, new CompoundPropertyModel(new NuevaAsignacionModel())) {
+class NuevaAsignacionForm(id: String, planificacion: Planificacion)
+  extends Form[NuevaAsignacionModel](id, new CompoundPropertyModel(new NuevaAsignacionModel())) {
 
   getModelObject.buscador.search
   getModelObject.setFecha(planificacion.fecha)
-
-  setupModalStyle()
 
   addPanelBusqueda()
   addResultados()
@@ -56,15 +53,6 @@ class NuevaAsignacionModal(id: String, planificacion: Planificacion)
       .setOutputMarkupId(true)
   }
 
-  def setupModalStyle() = {
-    addCloseButton()
-    header(Model.of("Nueva asignación"))
-    setUseCloseHandler(true)
-    show(false)
-    size(Modal.Size.Medium)
-    setUseKeyboard(true)
-  }
-
   def addPanelBusqueda() = {
     val form = new BootstrapForm[NuevaAsignacionModel]("busquedaForm", this.getModel)
 
@@ -76,9 +64,9 @@ class NuevaAsignacionModal(id: String, planificacion: Planificacion)
 
       new BootstrapAjaxButton("buscar", Buttons.Type.Success) {
         override def onSubmit(target: AjaxRequestTarget, form: Form[_]) = {
-          val modal = NuevaAsignacionModal.this
+          val modal = NuevaAsignacionForm.this
           modal.getModelObject.buscador.search
-          target add createResultadosTable
+          target add modal
         }
       }
     )

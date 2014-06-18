@@ -1,5 +1,14 @@
 <wicket:extend>
-    <a wicket:id="nuevaAsignacionModal-opener">Planificar</a>
+    <form wicket:id="nuevaAsignacionModal">
+        <form wicket:id="busquedaForm">
+            <label>Inicio</label>
+            <select wicket:id="inicio" name="inicio"/>
 
-    <div wicket:id="nuevaAsignacionModal"></div>
+            <label>Fin</label>
+            <select wicket:id="fin" name="fin"/>
+
+            <input type="submit" wicket:id="buscar" value="Buscar"></input>
+        </form>
+        <table wicket:id="resultados"></table>
+    </form>
 </wicket:extend>
