@@ -10,13 +10,14 @@ import edu.unq.uis.planificador.domain.calendar.DiaDeSemana
 import edu.unq.uis.planificador.domain.calendar.DiaDeSemana.{Lunes, Martes, Sabado, Viernes}
 import edu.unq.uis.planificador.domain.disponibilidad.Turno
 import edu.unq.uis.planificador.homes.{AbstractCollectionBasedHomeEmpleado, EmpleadosCollectionBasedHome}
+import edu.unq.uis.planificador.wicket.empleado.EmpleadosPage
 import org.apache.wicket.protocol.http.WebApplication
 import org.apache.wicket.util.convert.IConverter
 import org.apache.wicket.{ConverterLocator, IConverterLocator}
 
 class WicketScalaApplication extends WebApplication {
 
-  override def getHomePage = classOf[MainPage]
+  override def getHomePage = classOf[EmpleadosPage]
 
   override def init() {
     super.init()

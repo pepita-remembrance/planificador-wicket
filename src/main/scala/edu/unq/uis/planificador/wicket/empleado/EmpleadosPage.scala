@@ -1,12 +1,11 @@
-package edu.unq.uis.planificador.wicket
+package edu.unq.uis.planificador.wicket.empleado
 
 import edu.unq.uis.planificador.applicationModel.empleado.BuscadorEmpleados
 import edu.unq.uis.planificador.domain.Empleado
-import edu.unq.uis.planificador.wicket.empleado.{DisponibilidadEmpleadoPanel, RestriccionesEmpleadoPanel}
+import edu.unq.uis.planificador.wicket.BasePage
 import edu.unq.uis.planificador.wicket.widgets.grid.BootstrapEditableGrid
 import edu.unq.uis.planificador.wicket.widgets.grid.columns.CustomActionColumn
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn
-import org.apache.wicket.markup.html.WebPage
 import org.apache.wicket.markup.html.basic.Label
 import org.apache.wicket.markup.html.form.Form
 import org.apache.wicket.model.{CompoundPropertyModel, Model}
@@ -16,7 +15,7 @@ import org.wicketstuff.egrid.provider.EditableListDataProvider
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 
-class MainPage extends WebPage {
+class EmpleadosPage extends BasePage {
   val ROWS_PER_PAGE = 20
 
   val buscador = new BuscadorEmpleados()
