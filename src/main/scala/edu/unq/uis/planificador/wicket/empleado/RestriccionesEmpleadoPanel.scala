@@ -7,9 +7,10 @@ import org.apache.wicket.model.Model
 import org.joda.time.DateTime
 import org.wicketstuff.egrid.column.RequiredEditableTextFieldColumn
 import org.wicketstuff.egrid.provider.{EditableListDataProvider, IEditableDataProvider}
-
+import edu.unq.uis.planificador.domain._
 import scala.collection.JavaConversions._
 import scala.collection.mutable
+import edu.unq.uis.planificador.domain.calendar.{AllDayCalendarSpace, CalendarElement}
 
 case class Restriccion(var fecha: DateTime) {
   def this() = this(null)
@@ -21,7 +22,7 @@ class RestriccionesProvider(empleado: Empleado) extends EditableListDataProvider
   }
 
   override def remove(item: Restriccion) {
-    //    empleado.borrarRestriccion(item)
+     empleado.borrarRestriccion(CalendarElement(disponibilidad.Restriccion, AllDayCalendarSpace(item.fecha)))
   }
 
   override def getData = empleado.restricciones.map(it => Restriccion(it.calendarSpace.fecha))
