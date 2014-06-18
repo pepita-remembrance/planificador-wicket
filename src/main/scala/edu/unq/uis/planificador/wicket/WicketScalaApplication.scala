@@ -1,13 +1,18 @@
 package edu.unq.uis.planificador.wicket
 
+import java.util.Locale
+
 import de.agilecoders.wicket.core.Bootstrap
 import de.agilecoders.wicket.core.settings.BootstrapSettings
 import edu.unq.uis.planificador.domain.Empleado
 import edu.unq.uis.planificador.domain.builders.RecurrentCalendarSpaceBuilder._
+import edu.unq.uis.planificador.domain.calendar.DiaDeSemana
 import edu.unq.uis.planificador.domain.calendar.DiaDeSemana.{Lunes, Martes, Sabado, Viernes}
 import edu.unq.uis.planificador.domain.disponibilidad.Turno
 import edu.unq.uis.planificador.homes.{AbstractCollectionBasedHomeEmpleado, EmpleadosCollectionBasedHome}
 import org.apache.wicket.protocol.http.WebApplication
+import org.apache.wicket.util.convert.IConverter
+import org.apache.wicket.{ConverterLocator, IConverterLocator}
 
 class WicketScalaApplication extends WebApplication {
 
@@ -17,6 +22,12 @@ class WicketScalaApplication extends WebApplication {
     super.init()
     setupFixture()
     Bootstrap.install(this, new BootstrapSettings())
+  }
+
+  override def newConverterLocator: IConverterLocator = {
+    val locator = super.newConverterLocator().asInstanceOf[ConverterLocator]
+    locator.set(classOf[DiaDeSemana], new DiaDeSemanaConverter())
+    locator
   }
 
   def setupFixture() {
@@ -36,4 +47,10 @@ class WicketScalaApplication extends WebApplication {
     empleadoHome.create(juana)
   }
 
+}
+
+class DiaDeSemanaConverter extends IConverter[DiaDeSemana] {
+  override def convertToObject(p1: String, p2: Locale): DiaDeSemana = DiaDeSemana.todos.find(_.nombre == p1).get
+
+  override def convertToString(p1: DiaDeSemana, p2: Locale): String = p1.nombre
 }
