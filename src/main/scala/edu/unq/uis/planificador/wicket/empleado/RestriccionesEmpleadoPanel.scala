@@ -1,36 +1,37 @@
 package edu.unq.uis.planificador.wicket.empleado
 
 import edu.unq.uis.planificador.domain.Empleado
-import edu.unq.uis.planificador.domain.calendar.{CalendarElement, DiaDeSemana}
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn
 import org.apache.wicket.model.Model
+import org.joda.time.DateTime
 import org.wicketstuff.egrid.column.RequiredEditableTextFieldColumn
 import org.wicketstuff.egrid.provider.{EditableListDataProvider, IEditableDataProvider}
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 
-class RestriccionesProvider(empleado: Empleado) extends EditableListDataProvider[CalendarElement, String]() {
-  override def add(item: CalendarElement) {
-  }
-
-  override def remove(item: CalendarElement) {
-    empleado.borrarRestriccion(item)
-  }
-
-  override def getData = empleado.restricciones
+case class Restriccion(var fecha: DateTime) {
+  def this() = this(null)
 }
 
-class RestriccionesEmpleadoPanel(id: String, empleadoSeleccionado: Empleado) extends EmpleadosSubPanel(id, empleadoSeleccionado, classOf[CalendarElement]) {
-  override def getColumns: mutable.Buffer[PropertyColumn[CalendarElement, String]] = {
-    mutable.Buffer.empty[PropertyColumn[CalendarElement, String]] :+
-      new RequiredEditableTextFieldColumn[CalendarElement, String](new Model("Dia"), "fechaUserFriendly")
+class RestriccionesProvider(empleado: Empleado) extends EditableListDataProvider[Restriccion, String]() {
+  override def add(item: Restriccion) {
+    empleado.restriccionEl(item.fecha)
   }
 
-  override def getProvider: IEditableDataProvider[CalendarElement, String] = new RestriccionesProvider(empleadoSeleccionado)
-
-  def diasRestantes: Seq[DiaDeSemana with Product] = {
-    DiaDeSemana.todos.diff(empleadoSeleccionado.disponibilidades.map(_.diaDeSemana))
+  override def remove(item: Restriccion) {
+    //    empleado.borrarRestriccion(item)
   }
+
+  override def getData = empleado.restricciones.map(it => Restriccion(it.calendarSpace.fecha))
+}
+
+class RestriccionesEmpleadoPanel(id: String, empleadoSeleccionado: Empleado) extends EmpleadosSubPanel(id, empleadoSeleccionado, classOf[Restriccion]) {
+  override def getColumns: mutable.Buffer[PropertyColumn[Restriccion, String]] = {
+    mutable.Buffer.empty[PropertyColumn[Restriccion, String]] :+
+      new RequiredEditableTextFieldColumn[Restriccion, String](new Model("Dia"), "fecha")
+  }
+
+  override def getProvider: IEditableDataProvider[Restriccion, String] = new RestriccionesProvider(empleadoSeleccionado)
 }
 
