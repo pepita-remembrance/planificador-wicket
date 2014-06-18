@@ -8,7 +8,8 @@ import edu.unq.uis.planificador.domain.calendar.DiaDeSemana
 import edu.unq.uis.planificador.domain.calendar.DiaDeSemana._
 import edu.unq.uis.planificador.domain.disponibilidad.Turno
 import edu.unq.uis.planificador.homes.{AbstractCollectionBasedHomeEmpleado, EmpleadosCollectionBasedHome}
-import edu.unq.uis.planificador.wicket.converters.{DateTimeConverter, DiaDeSemanaConverter}
+import edu.unq.uis.planificador.ui.empleado.Hora
+import edu.unq.uis.planificador.wicket.converters.{DateTimeConverter, DiaDeSemanaConverter, HoraConverter}
 import edu.unq.uis.planificador.wicket.empleado.EmpleadosPage
 import org.apache.wicket.protocol.http.WebApplication
 import org.apache.wicket.{ConverterLocator, IConverterLocator}
@@ -28,6 +29,7 @@ class WicketScalaApplication extends WebApplication {
     val locator = super.newConverterLocator().asInstanceOf[ConverterLocator]
     locator.set(classOf[DiaDeSemana], new DiaDeSemanaConverter())
     locator.set(classOf[DateTime], new DateTimeConverter())
+    locator.set(classOf[Hora], new HoraConverter())
     locator
   }
 

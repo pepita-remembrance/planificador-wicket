@@ -2,23 +2,21 @@ package edu.unq.uis.planificador.wicket.planificacion
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.table.TableBehavior
 import edu.unq.uis.planificador.applicationModel.planificacion.BuscadorPlanificacion
-import edu.unq.uis.planificador.domain.TurnoEmpleado
+import edu.unq.uis.planificador.domain.{Planificacion, TurnoEmpleado}
 import edu.unq.uis.planificador.wicket.BasePage
 import edu.unq.uis.planificador.wicket.widgets.SubPanel
+import org.apache.wicket.ajax.AjaxRequestTarget
+import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior
 import org.apache.wicket.extensions.markup.html.repeater.data.table.{DataTable, PropertyColumn}
 import org.apache.wicket.markup.html.basic.Label
 import org.apache.wicket.markup.html.form.Form
+import org.apache.wicket.markup.repeater.Item
 import org.apache.wicket.markup.repeater.data.ListDataProvider
-import org.apache.wicket.model.{IModel, CompoundPropertyModel, Model}
+import org.apache.wicket.model.{CompoundPropertyModel, IModel, Model}
 import org.wicketstuff.egrid.provider.{EditableListDataProvider, IEditableDataProvider}
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
-import edu.unq.uis.planificador.domain.Planificacion
-import org.apache.wicket.markup.repeater.Item
-import org.apache.wicket.ajax.AjaxRequestTarget
-import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior
-import edu.unq.uis.planificador.wicket.widgets.grid.columns.RangedHoursColumn
 
 class PlanificacionesProvider(planificacion: Planificacion) extends EditableListDataProvider[TurnoEmpleado, String]() {
   override def add(item: TurnoEmpleado) {
@@ -33,6 +31,18 @@ class PlanificacionesProvider(planificacion: Planificacion) extends EditableList
 }
 
 class HorariosPlanificacionPanel(id: String, planificacion: Planificacion) extends SubPanel(id, planificacion, classOf[TurnoEmpleado]) {
+  addNuevaAsignacionModal(this)
+
+  def addNuevaAsignacionModal(container: WebMarkupContainer) = {
+    val modal = new NuevaAsignacionModal("nuevaAsignacionModal", planificacion)
+
+    val modalButton = new BootstrapButton("nuevaAsignacionModal-opener", Buttons.Type.Default)
+    modalButton.setLabel(Model.of("Planificar"))
+    modal.addOpenerAttributesTo(modalButton)
+
+    container.add(modal, modalButton)
+  }    
+  
   override def getProvider: IEditableDataProvider[TurnoEmpleado, String] = new PlanificacionesProvider(planificacion)
 
   override def getColumns: mutable.Buffer[PropertyColumn[TurnoEmpleado, String]] =
@@ -71,6 +81,7 @@ class PlanificacionesPage extends BasePage {
   addResultadosGrid(buscarForm)
   addPlanificacionesPanel(buscarForm)
   addHorariosPanel(buscarForm)
+
   add(buscarForm)
 
   def addPlanificacionesPanel(form: Form[BuscadorPlanificacion]) = {
@@ -124,6 +135,7 @@ class PlanificacionesPage extends BasePage {
         })
         rowItem
       }
+
     }
       .add(new TableBehavior().hover())
       .setOutputMarkupId(true)
