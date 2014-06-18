@@ -2,12 +2,12 @@ package edu.unq.uis.planificador.wicket.empleado
 
 import edu.unq.uis.planificador.domain.Empleado
 import edu.unq.uis.planificador.domain.calendar.{DiaDeSemana, RecurrentCalendarSpace}
+import edu.unq.uis.planificador.wicket.widgets.grid.BootstrapEditableGrid
 import edu.unq.uis.planificador.wicket.widgets.grid.columns.RequiredEditableDropDownColumn
 import org.apache.wicket.ajax.AjaxRequestTarget
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn
 import org.apache.wicket.markup.html.panel.Panel
 import org.apache.wicket.model.{IModel, Model}
-import org.wicketstuff.egrid.EditableGrid
 import org.wicketstuff.egrid.column.RequiredEditableTextFieldColumn
 import org.wicketstuff.egrid.provider.EditableListDataProvider
 
@@ -29,7 +29,7 @@ class DisponibilidadesProvider(empleado: Empleado) extends EditableListDataProvi
 class DisponibilidadEmpleadoPanel(var empleadoSeleccionado: Empleado) extends Panel("disponibilidades", new Model(empleadoSeleccionado)) {
   val ROWS_PER_PAGE = 20
 
-  add(new EditableGrid[RecurrentCalendarSpace, String](
+  add(new BootstrapEditableGrid[RecurrentCalendarSpace, String](
     "grid",
     getColumns,
     new DisponibilidadesProvider(empleadoSeleccionado),

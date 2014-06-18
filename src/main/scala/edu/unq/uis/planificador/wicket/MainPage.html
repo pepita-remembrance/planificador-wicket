@@ -4,7 +4,24 @@
     <title>Planificador</title>
 </head>
 <body>
-<div wicket:id="grid" border="1"></div>
-<div wicket:id="disponibilidades"></div>
+<form wicket:id="buscadorEmpleados">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Empleados</h3>
+        </div>
+        <div class="panel-body">
+            <div wicket:id="grid"></div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title" wicket:id="empleadoSeleccionado.nombreCompleto">Juan Perez</h3>
+        </div>
+        <div class="panel-body">
+            <div wicket:id="disponibilidades"></div>
+        </div>
+    </div>
+</form>
 </body>
 </html>

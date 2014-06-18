@@ -1,41 +1,57 @@
 package edu.unq.uis.planificador.wicket
 
+import edu.unq.uis.planificador.applicationModel.empleado.BuscadorEmpleados
 import edu.unq.uis.planificador.domain.Empleado
-import edu.unq.uis.planificador.homes.{AbstractCollectionBasedHomeEmpleado, EmpleadosCollectionBasedHome}
 import edu.unq.uis.planificador.wicket.empleado.DisponibilidadEmpleadoPanel
+import edu.unq.uis.planificador.wicket.widgets.grid.BootstrapEditableGrid
 import edu.unq.uis.planificador.wicket.widgets.grid.columns.CustomActionColumn
-import org.apache.wicket.ajax.AjaxRequestTarget
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn
 import org.apache.wicket.markup.html.WebPage
-import org.apache.wicket.model.{IModel, Model}
-import org.wicketstuff.egrid.EditableGrid
+import org.apache.wicket.markup.html.basic.Label
+import org.apache.wicket.markup.html.form.Form
+import org.apache.wicket.model.{CompoundPropertyModel, Model}
 import org.wicketstuff.egrid.column.RequiredEditableTextFieldColumn
 import org.wicketstuff.egrid.provider.EditableListDataProvider
 
-import scala.collection.JavaConverters._
+import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 class MainPage extends WebPage {
   val ROWS_PER_PAGE = 20
 
-  val empleadoHome: AbstractCollectionBasedHomeEmpleado = EmpleadosCollectionBasedHome
-  var disponibilidadEmpleadoPanel: DisponibilidadEmpleadoPanel = _
+  val buscador = new BuscadorEmpleados()
+  val buscarForm = new Form[BuscadorEmpleados]("buscadorEmpleados", new CompoundPropertyModel[BuscadorEmpleados](buscador))
 
-  add(new EditableGrid[Empleado, String](
-    "grid",
-    getColumns.asJava,
-    new EditableListDataProvider[Empleado, String](empleadoHome.allInstances),
-    ROWS_PER_PAGE,
-    classOf[Empleado]
-  ) {
-    override def onAdd(target: AjaxRequestTarget, newRow: Empleado): Unit = empleadoHome.create(newRow)
+  buscador.search
 
-    override def onDelete(target: AjaxRequestTarget, rowModel: IModel[Empleado]): Unit = empleadoHome.delete(rowModel.getObject)
+  addResultadosGrid(buscarForm)
+
+  buscarForm.add(new Label("empleadoSeleccionado.nombreCompleto"))
+  addDisponibilidadesPanel(buscarForm)
+
+  add(buscarForm)
+
+  def addDisponibilidadesPanel(form: Form[BuscadorEmpleados]) = {
+    form.add(createDisponibilidadPanel)
   }
-  )
 
-  setDisponibilidadesPanel(empleadoHome.allInstances.get(0))
-  add(disponibilidadEmpleadoPanel)
+  def createDisponibilidadPanel: DisponibilidadEmpleadoPanel = {
+    val panel = new DisponibilidadEmpleadoPanel(buscador.empleadoSeleccionado)
+    panel.setOutputMarkupId(true)
+    panel
+  }
+
+  def addResultadosGrid(form: Form[BuscadorEmpleados]) = {
+    val grid = new BootstrapEditableGrid[Empleado, String](
+      "grid",
+      getColumns,
+      new EditableListDataProvider[Empleado, String](buscador.empleados),
+      ROWS_PER_PAGE,
+      classOf[Empleado]
+    )
+
+    form.add(grid)
+  }
 
   def getColumns: mutable.Buffer[PropertyColumn[Empleado, String]] = {
     mutable.Buffer.empty[PropertyColumn[Empleado, String]] :+
@@ -45,18 +61,18 @@ class MainPage extends WebPage {
       new CustomActionColumn[Empleado, String](
         "Ver disponibilidades",
         (target, model) => {
-          val currentPanel = disponibilidadEmpleadoPanel
-          setDisponibilidadesPanel(model.getObject)
+          buscador.empleadoSeleccionado = model.getObject
 
-          currentPanel.replaceWith(disponibilidadEmpleadoPanel)
+          //Tengo que hacer esto a mano porque el Grid no se banca un Model
+          refreshDisponibilidades()
 
-          target.add(disponibilidadEmpleadoPanel)
+          target add buscarForm
         }
       )
   }
 
-  def setDisponibilidadesPanel(empleado: Empleado) = {
-    disponibilidadEmpleadoPanel = new DisponibilidadEmpleadoPanel(empleado)
-    disponibilidadEmpleadoPanel.setOutputMarkupId(true)
+  def refreshDisponibilidades() {
+    buscarForm.remove("disponibilidades")
+    addDisponibilidadesPanel(buscarForm)
   }
 }
