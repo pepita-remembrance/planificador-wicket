@@ -2,10 +2,9 @@ package edu.unq.uis.planificador.wicket.planificacion
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.table.TableBehavior
 import edu.unq.uis.planificador.applicationModel.planificacion.BuscadorPlanificacion
-import edu.unq.uis.planificador.domain.{Planificacion, TurnoEmpleado}
+import edu.unq.uis.planificador.domain.TurnoEmpleado
 import edu.unq.uis.planificador.wicket.BasePage
 import edu.unq.uis.planificador.wicket.widgets.SubPanel
-import edu.unq.uis.planificador.wicket.widgets.grid.columns.CustomActionColumn
 import org.apache.wicket.extensions.markup.html.repeater.data.table.{DataTable, PropertyColumn}
 import org.apache.wicket.markup.html.basic.Label
 import org.apache.wicket.markup.html.form.Form
@@ -17,8 +16,9 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable
 import edu.unq.uis.planificador.domain.Planificacion
 import org.apache.wicket.markup.repeater.Item
-import org.apache.wicket.ajax.{AjaxRequestTarget, AjaxEventBehavior}
+import org.apache.wicket.ajax.AjaxRequestTarget
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior
+import edu.unq.uis.planificador.wicket.widgets.grid.columns.RangedHoursColumn
 
 class PlanificacionesProvider(planificacion: Planificacion) extends EditableListDataProvider[TurnoEmpleado, String]() {
   override def add(item: TurnoEmpleado) {
@@ -42,6 +42,22 @@ class HorariosPlanificacionPanel(id: String, planificacion: Planificacion) exten
       new PropertyColumn[TurnoEmpleado, String](new Model("Fin"), "fin")
 }
 
+class TurnosAsignadosPanelSarasa (id: String, planificacionSeleccionada: Planificacion) extends SubPanel(id, planificacionSeleccionada, classOf[TurnoEmpleado]) {
+  override def getColumns: mutable.Buffer[PropertyColumn[TurnoEmpleado, String]] = {
+
+    val buffer: mutable.Buffer[PropertyColumn[TurnoEmpleado, String]] = mutable.Buffer.empty[PropertyColumn[TurnoEmpleado, String]]
+
+    buffer += new PropertyColumn[TurnoEmpleado, String](new Model("Nombre"), "nombre")
+
+    List.range(0,24).foreach(index => buffer += new PropertyColumn[TurnoEmpleado, String](new Model(index.toString), s"horarios[$index]"))
+
+    buffer
+  }
+
+  override def getProvider: IEditableDataProvider[TurnoEmpleado, String] = new TurnosAsignadosProvider(planificacionSeleccionada)
+
+}
+
 class PlanificacionesPage extends BasePage {
   val ROWS_PER_PAGE = 20
 
@@ -53,15 +69,41 @@ class PlanificacionesPage extends BasePage {
   buscarForm.add(new Label("planificacionSeleccionada.fecha"))
 
   addResultadosGrid(buscarForm)
+  addPlanificacionesPanel(buscarForm)
   addHorariosPanel(buscarForm)
-
   add(buscarForm)
+
+  def addPlanificacionesPanel(form: Form[BuscadorPlanificacion]) = {
+    val panel = new TurnosAsignadosPanelSarasa("turnos", buscador.planificacionSeleccionada)
+    panel.setOutputMarkupId(true)
+
+    form.add(panel)
+  }
 
   def addHorariosPanel(form: Form[BuscadorPlanificacion]) = {
     val panel = new HorariosPlanificacionPanel("horarios", buscador.planificacionSeleccionada)
     panel.setOutputMarkupId(true)
 
     form.add(panel)
+  }
+
+
+  def addTurnosGrid(form: Form[BuscadorPlanificacion]) = {
+    val grid = new DataTable[TurnoEmpleado, String](
+      "turnos",
+      turnosColumns,
+      new ListDataProvider[TurnoEmpleado](buscador.planificacionSeleccionada.turnos),
+      ROWS_PER_PAGE
+    )
+      .add(new TableBehavior().hover())
+      .setOutputMarkupId(true)
+
+    form.add(grid)
+  }
+
+  def turnosColumns = {
+    mutable.Buffer.empty[PropertyColumn[TurnoEmpleado, String]] :+
+      new PropertyColumn[TurnoEmpleado, String](new Model("Nombre"), "nombre")
   }
 
   def addResultadosGrid(form: Form[BuscadorPlanificacion]) = {
@@ -82,7 +124,6 @@ class PlanificacionesPage extends BasePage {
         })
         rowItem
       }
-
     }
       .add(new TableBehavior().hover())
       .setOutputMarkupId(true)
@@ -98,6 +139,9 @@ class PlanificacionesPage extends BasePage {
 
   def refreshPanels() = {
     buscarForm.remove("horarios")
+    buscarForm.remove("turnos")
+
     addHorariosPanel(buscarForm)
+    addPlanificacionesPanel(buscarForm)
   }
 }
