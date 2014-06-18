@@ -22,16 +22,16 @@ class MainPage extends WebPage {
   var disponibilidadEmpleadoPanel: DisponibilidadEmpleadoPanel = _
 
   add(new EditableGrid[Empleado, String](
-      "grid",
-      getColumns.asJava,
+    "grid",
+    getColumns.asJava,
     new EditableListDataProvider[Empleado, String](empleadoHome.allInstances),
-      ROWS_PER_PAGE,
-      classOf[Empleado]
-    ) {
+    ROWS_PER_PAGE,
+    classOf[Empleado]
+  ) {
     override def onAdd(target: AjaxRequestTarget, newRow: Empleado): Unit = empleadoHome.create(newRow)
 
     override def onDelete(target: AjaxRequestTarget, rowModel: IModel[Empleado]): Unit = empleadoHome.delete(rowModel.getObject)
-    }
+  }
   )
 
   setDisponibilidadesPanel(empleadoHome.allInstances.get(0))
@@ -42,7 +42,6 @@ class MainPage extends WebPage {
       new RequiredEditableTextFieldColumn[Empleado, String](new Model("Nombre"), "nombre", true) :+
       new RequiredEditableTextFieldColumn[Empleado, String](new Model("Apellido"), "apellido", true) :+
       new RequiredEditableTextFieldColumn[Empleado, String](new Model("Legajo"), "legajo", true) :+
-      new PropertyColumn[Empleado, String](new Model("Dias disponible"), "diasDisponible") :+
       new CustomActionColumn[Empleado, String](
         "Ver disponibilidades",
         (target, model) => {
